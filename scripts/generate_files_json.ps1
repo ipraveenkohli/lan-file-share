@@ -1,5 +1,5 @@
 Param(
-  [string]$Root = "G:\Shivali"
+  [string]$Root = "G:\<locaion>"
 )
 
 function Write-FilesJson($dir) {
