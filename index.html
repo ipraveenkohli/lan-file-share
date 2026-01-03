@@ -1,1 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>File Share</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header>
+    <h1>Shared Files</h1>
+    <div class="info">Serving folder: <span id="folder-name"></span></div>
+  </header>
 
+  <main>
+    <div id="list"></div>
+    <div id="empty" class="hidden">No files found.</div>
+  </main>
+
+  <script>
+    const folderName = location.pathname.replace(/\/$/, '') || '/';
+    document.getElementById('folder-name').textContent = folderName;
+
+    async function loadList() {
+      try {
+        const res = await fetch('files.json', {cache: 'no-store'});
+        if (!res.ok) throw new Error('files.json not found');
+        const items = await res.json();
+        render(items);
+      } catch (err) {
+        document.getElementById('empty').classList.remove('hidden');
+        console.error(err);
+      }
+    }
+
+    function iconClass(name, isDir) {
+      if (isDir) return 'icon folder';
+      const ext = name.split('.').pop().toLowerCase();
+      if (['png','jpg','jpeg','gif','svg','webp'].includes(ext)) return 'icon image';
+      if (['mp4','mkv','avi','mov','webm'].includes(ext)) return 'icon video';
+      if (['mp3','wav','flac','m4a'].includes(ext)) return 'icon audio';
+      if (['zip','rar','7z','tar','gz'].includes(ext)) return 'icon archive';
+      if (['pdf'].includes(ext)) return 'icon pdf';
+      if (['doc','docx','xls','xlsx','ppt','pptx'].includes(ext)) return 'icon doc';
+      return 'icon file';
+    }
+
+    function render(items) {
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+      if (!items || items.length === 0) {
+        document.getElementById('empty').classList.remove('hidden');
+        return;
+      }
+      items.forEach(it => {
+        const row = document.createElement('a');
+        row.className = 'row';
+        row.href = encodeURI(it.href);
+        if (it.isDir) row.href += '/';
+        row.target = '_self';
+
+        const ic = document.createElement('span');
+        ic.className = iconClass(it.name, it.isDir);
+        row.appendChild(ic);
+
+        const name = document.createElement('span');
+        name.className = 'name';
+        name.textContent = it.name;
+        row.appendChild(name);
+
+        const meta = document.createElement('span');
+        meta.className = 'meta';
+        meta.textContent = it.isDir ? 'Folder' : (it.size ? humanSize(it.size) : '');
+        row.appendChild(meta);
+
+        list.appendChild(row);
+      });
+    }
+
+    function humanSize(bytes) {
+      if (!bytes && bytes !== 0) return '';
+      const units = ['B','KB','MB','GB','TB'];
+      let i = 0;
+      let n = Number(bytes);
+      while (n >= 1024 && i < units.length-1) { n /= 1024; i++; }
+      return `${n.toFixed(n < 10 && i>0 ? 1 : 0)} ${units[i]}`;
+    }
+
+    loadList();
+  </script>
+</body>
+</html>
