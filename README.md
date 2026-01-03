@@ -68,7 +68,7 @@ docker run -d -p 8080:80 -v G:\<location>:/usr/share/nginx/html:ro file-server
 ### 4. Generate `files.json`
 Run the recursive script to create `files.json` in every folder:
 ```powershell
-cd G:\Shivali
+cd G:\<location>
 .\scripts\generate_files_json_recursive.ps1
 ```
 
