@@ -23,19 +23,7 @@ It serves any folder on your host machine over LAN with a **custom HTML/CSS UI**
 
 ---
 
-## 📦 Project Structure
-```
-docker-file-server/
-├── Dockerfile
-├── nginx.conf
-├── index.html
-├── assets/
-│   └── style.css
-├── scripts/
-│   ├── generate_files_json.ps1
-│   └── generate_files_json_recursive.ps1
-└── README.md
-```
+
 
 ---
 
